@@ -19,6 +19,7 @@ CMakeLists.txt
 *.vcxproj
 */**/.vs/*
 .idea/
+out/*
 
 profile.properties
 

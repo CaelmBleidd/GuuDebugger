@@ -1,0 +1,22 @@
+        sub        main
+    call            foo
+
+                                sub foo
+                      set                   a                           15
+
+
+
+
+
+
+
+
+
+
+
+call b
+
+
+
+                sub b
+                                    print a

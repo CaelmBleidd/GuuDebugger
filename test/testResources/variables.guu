@@ -1,0 +1,17 @@
+sub main
+    call make
+
+sub make
+    set a 1
+    set b 2
+    set c 3
+    set d 4
+    set e 5
+    call reverse
+
+sub reverse
+    set a 5
+    set b 4
+    set c 3
+    set d 2
+    set e 1

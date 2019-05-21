@@ -1,0 +1,23 @@
+sub main
+    set a 0
+    call foo
+
+sub foo
+    set a 1
+    call boo
+
+sub boo
+    set a 2
+    call zoo
+
+sub zoo
+    set a 3
+    call qoo
+
+sub qoo
+    set a 4
+    call doo
+
+sub doo
+    set a 5
+    print a
