@@ -68,6 +68,7 @@ class GuuDebuggerTest {
         } catch (exc: StackOverflowError) {
             println("Stack overflowed")
             caught = true
+            println(exc.message)
         }
         assertTrue(caught)
     }
@@ -79,6 +80,7 @@ class GuuDebuggerTest {
         } catch (exc: FileNotFoundException) {
             println("File \"asflkjsandflkjasnflkjsndlfkjnaslkjfn\" not found")
             caught = true
+            println(exc.message)
         }
         assertTrue(caught)
     }
@@ -89,6 +91,7 @@ class GuuDebuggerTest {
             debugger.parse("test/testResources/wrongCommand.guu")
         } catch (exc: IllegalArgumentException) {
             caught = true
+            println(exc.message)
         }
         assertTrue(caught)
     }
@@ -99,6 +102,7 @@ class GuuDebuggerTest {
             debugger.parse("test/testResources/unknownKeyword.guu")
         } catch (exc: NumberFormatException) {
             caught = true
+            println(exc.message)
         }
         assertTrue(caught)
     }
@@ -110,6 +114,7 @@ class GuuDebuggerTest {
             debugger.process()
         } catch (exc: NoSuchMethodException) {
             caught = true
+            println(exc.message)
         }
         assertTrue { caught }
     }
@@ -122,6 +127,7 @@ class GuuDebuggerTest {
             debugger.process()
         } catch (exc: NoSuchElementException) {
             caught = true
+            println(exc.message)
         }
         assertTrue { caught }
     }
@@ -134,6 +140,8 @@ class GuuDebuggerTest {
             debugger.process()
         } catch (exc: NoSuchMethodException) {
             caught = true
+            println(exc.message)
+            
         }
         assertTrue { caught }
     }

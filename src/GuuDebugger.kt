@@ -26,28 +26,19 @@ class GuuDebugger {
 
         reader.use { reader ->
             var nextLine: String?
-            try {
-                nextLine = reader.readLine()
-            } catch (exc: IOException) {
-                throw exc
-            }
+            nextLine = reader.readLine()
             while (nextLine != null) {
                 val line = nextLine.split("\\p{Space}+".toRegex()).filter { it != "" }
                 counter++
 
-                try {
-                    nextLine = reader.readLine()
-                } catch (exc: IOException) {
-                    throw exc
-                }
+                nextLine = reader.readLine()
 
                 if (line.isEmpty()) {
                     continue
                 }
 
                 if (line.size < 2) {
-                    println("There's no command with ${line.size} words: $line ($counter line)")
-                    throw IllegalArgumentException()
+                    throw IllegalArgumentException("There's no command with ${line.size} words: $line ($counter line)")
                 }
 
                 when (line[0]) {
@@ -62,8 +53,7 @@ class GuuDebugger {
                         tmpFunction.instructions.add(Operator(line[0], mutableListOf(line[1])))
                     }
                     else -> {
-                        println("Unexpected keyword \"${line[0]}\" found at $counter line.")
-                        throw NumberFormatException()
+                        throw NumberFormatException("Unexpected keyword \"${line[0]}\" found at $counter line.")
                     }
                 }
 
@@ -72,12 +62,7 @@ class GuuDebugger {
     }
 
     fun process() {
-        val main = nameToFunction["main"]
-        if (main == null) {
-            System.err.println("Can't find main-function in the source code")
-            throw NoSuchMethodException()
-
-        }
+        val main = nameToFunction["main"] ?: throw NoSuchMethodException("Can't find main-function in the source code")
 
         reader = System.`in`.bufferedReader()
 
@@ -121,8 +106,7 @@ class GuuDebugger {
                             savedStack.addAll(stack)
                         }
                         else -> {
-                            System.err.println("Unknown symbol found")
-                            throw IllegalArgumentException()
+                            throw IllegalArgumentException("Unknown symbol found")
                         }
                     }
                 }
@@ -131,17 +115,14 @@ class GuuDebugger {
             when (line.name) {
                 "call" -> {
                     val nextFunction = nameToFunction[line.args.first()]
-                    if (nextFunction == null) {
-                        System.err.println("Can't find function ${line.args.first()}")
-                        throw NoSuchMethodException()
-                    }
+                            ?: throw NoSuchMethodException("Can't find function ${line.args.first()}")
                     try {
                         if (hidden || newHidden)
                             execFunction(nextFunction, true)
                         else
                             execFunction(nextFunction, false)
                     } catch (exc: StackOverflowError) {
-                        throw exc
+                        throw StackOverflowError("Oops, stack overflowed")
                     }
                 }
                 "set" -> {
@@ -149,8 +130,7 @@ class GuuDebugger {
                     try {
                         variable = line.args[1].toInt()
                     } catch (exc: NumberFormatException) {
-                        System.err.println("${line.args[1]} is not a number, parsing failed")
-                        throw exc
+                        throw java.lang.NumberFormatException("${line.args[1]} is not a number, parsing failed")
                     }
                     variables[line.args.first()] = variable
                 }
@@ -159,8 +139,7 @@ class GuuDebugger {
                     if (variables.containsKey(variableName))
                         println(variableName)
                     else {
-                        System.err.println("Variable $variableName doesn't exist")
-                        throw NoSuchElementException()
+                        throw NoSuchElementException("Variable $variableName doesn't exist")
                     }
                 }
             }
@@ -206,17 +185,17 @@ fun main(args: Array<String>) {
         System.err.println("An error occurred during reading the file")
     } catch (exc: FileNotFoundException) {
         System.err.println("File $file doesn't exist")
-    } catch (ignored: IllegalArgumentException) {
-    } catch (ignored: NumberFormatException) {}
+    } catch (exc: IllegalArgumentException) {
+        System.err.println(exc.message)
+    } catch (exc: NumberFormatException) {
+        System.err.println(exc.message)
+    }
 
     try {
         debugger.process()
-    } catch (exc: StackOverflowError) {
-        System.err.println("Oops, stack overflowed")
-    } catch (ignored: NumberFormatException) {
-    } catch (ignored: NoSuchMethodException) {
-    } catch (ignored: NoSuchElementException) {
-    } catch (ignored: IllegalArgumentException) {}
+    } catch (exc: Throwable) {
+        System.err.println(exc.message)
+    }
 
 
 }
